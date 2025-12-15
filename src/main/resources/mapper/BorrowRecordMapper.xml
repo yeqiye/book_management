@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book_management.dao.BorrowRecordMapper">
+
+    <resultMap id="BorrowRecordMap" type="com.book_management.entity.BorrowRecord">
+        <id property="recordId" column="record_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="bookId" column="book_id"/>
+        <result property="title" column="title"/>
+        <result property="author" column="author"/>
+        <result property="borrowDate" column="borrow_date"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="returnDate" column="return_date"/>
+        <result property="status" column="status"/>
+        <result property="penalty" column="penalty"/>
+    </resultMap>
+
+    <select id="findByUserIdAndStatus" resultMap="BorrowRecordMap" parameterType="map">
+        SELECT br.*, b.title, b.author
+        FROM borrow_records br
+        JOIN books b ON br.book_id = b.book_id
+        WHERE br.user_id = #{userId}
+        <choose>
+            <when test="status == 'borrowed'">
+                AND br.status = 'borrowed'
+            </when>
+            <when test="status == 'overdue'">
+                AND br.status = 'borrowed' AND br.due_date &lt; CURDATE()
+            </when>
+            <when test="status == 'returned'">
+                AND br.status = 'returned'
+            </when>
+        </choose>
+        ORDER BY br.borrow_date DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByUserIdAndStatus" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM borrow_records br
+        WHERE br.user_id = #{userId}
+        <choose>
+            <when test="status == 'borrowed'">
+                AND br.status = 'borrowed'
+            </when>
+            <when test="status == 'overdue'">
+                AND br.status = 'borrowed' AND br.due_date &lt; CURDATE()
+            </when>
+            <when test="status == 'returned'">
+                AND br.status = 'returned'
+            </when>
+        </choose>
+    </select>
+
+</mapper>
