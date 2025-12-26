@@ -101,13 +101,6 @@
             border-color: #7a5c2e;
             box-shadow: 0 0 5px rgba(122, 92, 46, 0.5);
         }
-        .captcha-code {
-            background: #e8dcc0;
-            border: 1px dashed #7a5c2e;
-            color: #3b2f1e;
-            font-family: "Courier New", monospace;
-        }
-
         .captcha-group {
             display: flex;
             align-items: center;
@@ -117,13 +110,14 @@
         }
         .captcha-code{
             margin: 0 10px;
-            background: #f0f0f0;
-            padding: 10px 20px;
+            /*background: #f0f0f0;*/
+            /*padding: 10px 20px;*/
             border-radius: 5px;
             font-weight: bold;
             letter-spacing: 3px;
             font-size: 20px;
             color: #333;
+            cursor: pointer;
         }
 
         .refresh-captcha{
@@ -233,12 +227,17 @@
             <label for="captcha">验证码:</label>
             <div class="captcha-group">
                 <input type="text" id="captcha" name="captcha" class="captcha-input" required placeholder="请输入验证码">
-                <div class="captcha-code">${captcha}</div>
-                <button type="button"
-                        class="magic-btn"
-                        onclick="refreshCaptcha()">
-                    刷新验证码
-                </button>
+<%--                <div class="captcha-code">${captcha}</div>--%>
+                <img id="captchaImage"
+                     src="${pageContext.request.contextPath}/captcha"
+                     alt="验证码"
+                     class="captcha-code"
+                     onclick="refreshCaptcha()">
+<%--                <button type="button"--%>
+<%--                        class="magic-btn"--%>
+<%--                        onclick="refreshCaptcha()">--%>
+<%--                    刷新验证码--%>
+<%--                </button>--%>
             </div>
         </div>
         <button type="submit" class="btn-login">登  录</button>
@@ -250,7 +249,10 @@
 </div>
 <script>
     function refreshCaptcha() {
-        window.location.href = '${pageContext.request.contextPath}/refreshCaptcha';
+        var captchaImg = document.getElementById("captchaImage");
+        captchaImg.src='${pageContext.request.contextPath}/captcha?t='+new Date().getTime();
+        document.getElementById('captcha').value='';
+        <%--window.location.href = '${pageContext.request.contextPath}/refreshCaptcha';--%>
     }
 </script>
 </body>
