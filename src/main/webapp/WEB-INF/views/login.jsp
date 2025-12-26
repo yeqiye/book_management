@@ -5,21 +5,73 @@
     <title>图书借阅系统 - 登录</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            height: 100vh;
             margin: 0;
-            padding: 0;
+
+            background-image: url("${pageContext.request.contextPath}/static/images/login-bg.jpg");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
         }
+        body.hogwarts-bg {
+            font-family: "Georgia", "Times New Roman", serif;
+            background-image: url("${pageContext.request.contextPath}/static/images/login-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .magic-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+
+        .parchment {
+            position: relative;
+            z-index: 2;
+            width: 420px;
+            padding: 50px 40px;
+            background: #f5e8c7 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.07"><text x="10" y="50" font-size="60" fill="%23c2a46d">✶</text></svg>') repeat;
+            background-blend-mode: overlay;
+            border-radius: 8px 12px 8px 12px;
+            box-shadow:
+                    0 0 40px rgba(0,0,0,0.7),
+                    inset 0 0 40px rgba(140, 110, 60, 0.4),
+                    inset 0 0 80px rgba(220, 190, 120, 0.25);
+            border: 3px solid #b8975e;
+            border-image: linear-gradient(to bottom, #d4b778, #8b6f3e, #d4b778) 1;
+        }
+
+        .parchment::after {
+            content: "";
+            position: absolute;
+            bottom: 25px;
+            right: 35px;
+            width: 80px;
+            height: 80px;
+            background: url("${pageContext.request.contextPath}/static/images/wax-seal.png") center/contain no-repeat;
+            opacity: 0.9;
+            pointer-events: none;
+            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+        }
+
         .login-container {
             background: white;
             padding: 30px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 350px;
+            width: 450px;
         }
         h2 {
             text-align: center;
@@ -37,12 +89,25 @@
         }
         input[type="text"],
         input[type="password"] {
-            width: 100%;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid #b59b6a;
+            border-radius: 4px;
             padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            box-sizing: border-box;
+            font-size: 14px;
         }
+
+        input:focus {
+            outline: none;
+            border-color: #7a5c2e;
+            box-shadow: 0 0 5px rgba(122, 92, 46, 0.5);
+        }
+        .captcha-code {
+            background: #e8dcc0;
+            border: 1px dashed #7a5c2e;
+            color: #3b2f1e;
+            font-family: "Courier New", monospace;
+        }
+
         .captcha-group {
             display: flex;
             align-items: center;
@@ -60,6 +125,7 @@
             font-size: 20px;
             color: #333;
         }
+
         .refresh-captcha{
             padding: 10px 20px;
             border-radius: 5px;
@@ -68,18 +134,24 @@
             color: white;
         }
         .btn-login {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
+            background: linear-gradient(135deg, #6b4f2c, #3b2f1e);
+            color: #f3e9d2;
             font-size: 16px;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Georgia", "Times New Roman", serif;
+            font-weight: bold;
         }
+
         .btn-login:hover {
-            background: #0056b3;
+            background: linear-gradient(135deg, #8a6a3b, #4a3a24);
+            transform: translateY(-1px);
         }
+
         .error {
             color: red;
             margin-bottom: 15px;
@@ -95,11 +167,56 @@
             color: #666;
             font-size: 14px;
         }
+        .title {
+            text-align: center;
+            font-size: 28px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            color: #3b2f1e;
+        }
+        .magic-btn {
+            background: #4a351e;
+            font-family: "Georgia", "Times New Roman", serif;
+            color: #f5e6c8;
+            border: 1px solid #c2a46d;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow:
+                    inset 0 1px 1px rgba(255,255,255,0.3),
+                    0 2px 4px rgba(0,0,0,0.4);
+            transition: all 0.2s ease;
+        }
+
+        .magic-btn:hover {
+            background: #7a5a34;
+        }
+
+        .magic-btn:active {
+            transform: translateY(1px);
+            box-shadow:
+                    inset 0 2px 4px rgba(0,0,0,0.6);
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #8b6f47, #4a351e);
+            box-shadow: 0 0 15px rgba(220, 180, 100, 0.6);
+            transition: all 0.4s ease;
+        }
+
+        .btn-login:hover {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.9), 0 0 40px rgba(255, 165, 0, 0.6);
+            transform: scale(1.03);
+        }
+
     </style>
 </head>
-<body>
-<div class="login-container">
-    <h2>图书借阅系统</h2>
+<body class="hogwarts-bg">
+<div class="magic-overlay">
+</div>
+<div class="login-container parchment">
+    <h2 class="title">图书借阅系统</h2>
     <c:if test="${not empty error}">
         <div class="error">${error}</div>
     </c:if>
@@ -117,14 +234,18 @@
             <div class="captcha-group">
                 <input type="text" id="captcha" name="captcha" class="captcha-input" required placeholder="请输入验证码">
                 <div class="captcha-code">${captcha}</div>
-                <button type="button" class="refresh-captcha" onclick="refreshCaptcha()">刷新验证码</button>
+                <button type="button"
+                        class="magic-btn"
+                        onclick="refreshCaptcha()">
+                    刷新验证码
+                </button>
             </div>
         </div>
-        <button type="submit" class="btn-login">登录</button>
+        <button type="submit" class="btn-login">登  录</button>
     </form>
     <div class="test-accounts">
-        <p>测试账号: admin / admin123 (管理员)</p>
-        <p>测试账号: user1 / user123 (普通用户)</p>
+        <p>🪄 管理员: admin / admin123</p>
+        <p>📚 学生: user1 / user123</p>
     </div>
 </div>
 <script>

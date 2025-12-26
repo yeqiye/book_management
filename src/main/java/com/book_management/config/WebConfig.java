@@ -28,15 +28,10 @@ public class WebConfig implements WebMvcConfigurer {
     // 配置静态资源处理
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/");
-        registry.addResourceHandler("/css/**")
-                .addResourceLocations("/css/");
-        registry.addResourceHandler("/js/**")
-                .addResourceLocations("/js/");
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("/images/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("/static/");
     }
+
 
     @Bean
     public InternalResourceViewResolver jspViewResolver() {
