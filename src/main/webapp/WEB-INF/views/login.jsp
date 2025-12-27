@@ -33,7 +33,7 @@
         .magic-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(30, 20, 60, 0.45);
             z-index: 1;
         }
 
@@ -41,37 +41,46 @@
             position: relative;
             z-index: 2;
             width: 420px;
-            padding: 50px 40px;
-            background: #f5e8c7 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.07"><text x="10" y="50" font-size="60" fill="%23c2a46d">✶</text></svg>') repeat;
+            padding: 70px 40px 50px 40px;
+            background: #f8f1e0 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.07"><text x="10" y="50" font-size="60" fill="%23c2a46d">✶</text></svg>') repeat;
             background-blend-mode: overlay;
-            border-radius: 8px 12px 8px 12px;
-            box-shadow:
-                    0 0 40px rgba(0,0,0,0.7),
-                    inset 0 0 40px rgba(140, 110, 60, 0.4),
-                    inset 0 0 80px rgba(220, 190, 120, 0.25);
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.7), inset 0 0 40px rgba(140, 110, 60, 0.4), inset 0 0 80px rgba(220, 190, 120, 0.25);
             border: 3px solid #b8975e;
-            border-image: linear-gradient(to bottom, #d4b778, #8b6f3e, #d4b778) 1;
         }
 
-        .parchment::after {
+        .parchment::before {
             content: "";
             position: absolute;
-            bottom: 25px;
-            right: 35px;
-            width: 80px;
-            height: 80px;
-            background: url("${pageContext.request.contextPath}/static/images/wax-seal.png") center/contain no-repeat;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: #3b2f1e url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.12"><text x="10" y="20" font-size="30" fill="%23d4b778">★</text><text x="60" y="50" font-size="25" fill="%23d4b778">✶</text><text x="30" y="80" font-size="35" fill="%23d4b778">✦</text></svg>') repeat;
+            border-radius: 12px 12px 0 0;
             opacity: 0.9;
             pointer-events: none;
-            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+            z-index: 1;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #8b6a3b;
+            font-size: 2em;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3), 0 0 6px rgba(212,183,120,0.2);
+            position: relative;
+            z-index: 2;
         }
 
         .login-container {
-            background: white;
+            background: #f8f1e0;
             padding: 30px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             width: 450px;
+            border-radius: 12px;
         }
         h2 {
             text-align: center;
@@ -110,8 +119,6 @@
         }
         .captcha-code{
             margin: 0 10px;
-            /*background: #f0f0f0;*/
-            /*padding: 10px 20px;*/
             border-radius: 5px;
             font-weight: bold;
             letter-spacing: 3px;
@@ -120,13 +127,6 @@
             cursor: pointer;
         }
 
-        .refresh-captcha{
-            padding: 10px 20px;
-            border-radius: 5px;
-            background: #007bff;
-            border: 0;
-            color: white;
-        }
         .btn-login {
             background: linear-gradient(135deg, #6b4f2c, #3b2f1e);
             color: #f3e9d2;
@@ -147,14 +147,34 @@
         }
 
         .error {
-            color: red;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 3px;
+            color: white;
+            background: #b45331;
+            border: 2px solid #7a2a1d;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 16px;
             text-align: center;
+            font-family: "Georgia", "Times New Roman", serif;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
+
+        .error::before {
+            content: "⚡";
+            position: absolute;
+            top: 10px;
+            left:35%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: yellow;
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            100% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000; }
+        }
+
         .test-accounts {
             margin-top: 15px;
             text-align: center;
@@ -163,36 +183,13 @@
         }
         .title {
             text-align: center;
-            font-size: 28px;
+            font-size: 36px;
             letter-spacing: 2px;
             margin-bottom: 10px;
             color: #3b2f1e;
-        }
-        .magic-btn {
-            background: #4a351e;
-            font-family: "Georgia", "Times New Roman", serif;
-            color: #f5e6c8;
-            border: 1px solid #c2a46d;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-size: 14px;
             font-weight: bold;
-            cursor: pointer;
-            box-shadow:
-                    inset 0 1px 1px rgba(255,255,255,0.3),
-                    0 2px 4px rgba(0,0,0,0.4);
-            transition: all 0.2s ease;
         }
 
-        .magic-btn:hover {
-            background: #7a5a34;
-        }
-
-        .magic-btn:active {
-            transform: translateY(1px);
-            box-shadow:
-                    inset 0 2px 4px rgba(0,0,0,0.6);
-        }
         .btn-login {
             background: linear-gradient(135deg, #8b6f47, #4a351e);
             box-shadow: 0 0 15px rgba(220, 180, 100, 0.6);
@@ -227,17 +224,11 @@
             <label for="captcha">验证码:</label>
             <div class="captcha-group">
                 <input type="text" id="captcha" name="captcha" class="captcha-input" required placeholder="请输入验证码">
-<%--                <div class="captcha-code">${captcha}</div>--%>
                 <img id="captchaImage"
                      src="${pageContext.request.contextPath}/captcha"
                      alt="验证码"
                      class="captcha-code"
                      onclick="refreshCaptcha()">
-<%--                <button type="button"--%>
-<%--                        class="magic-btn"--%>
-<%--                        onclick="refreshCaptcha()">--%>
-<%--                    刷新验证码--%>
-<%--                </button>--%>
             </div>
         </div>
         <button type="submit" class="btn-login">登  录</button>
@@ -252,7 +243,6 @@
         var captchaImg = document.getElementById("captchaImage");
         captchaImg.src='${pageContext.request.contextPath}/captcha?t='+new Date().getTime();
         document.getElementById('captcha').value='';
-        <%--window.location.href = '${pageContext.request.contextPath}/refreshCaptcha';--%>
     }
 </script>
 </body>

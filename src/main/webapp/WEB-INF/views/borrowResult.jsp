@@ -73,6 +73,8 @@
             opacity: 0.9;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="result-container">
@@ -96,5 +98,24 @@
         <a href="${pageContext.request.contextPath}/main" class="btn btn-secondary">返回首页</a>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        <c:if test="${not empty messageType}">
+        Swal.fire({
+            title: "${messageType == 'success' ? '借阅成功！' : '借阅失败'}",
+            text: "${message}",
+            icon: "${messageType == 'success' ? 'success' : 'error'}",
+            confirmButtonText: '确定',
+            confirmButtonColor: '#8b6a3b',
+            background: '#f8f1e0',
+            backdrop: 'rgba(30, 20, 60, 0.8)',
+            timer: 4000,
+            timerProgressBar: true
+        }).then(() => {
+            window.location.href = "${pageContext.request.contextPath}/books/search";
+        });
+        </c:if>
+    });
+</script>
 </body>
 </html>

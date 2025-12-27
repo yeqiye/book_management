@@ -27,7 +27,7 @@ public class BorrowController {
         if (user == null) {
             model.addAttribute("message", "请先登录系统");
             model.addAttribute("messageType", "error");
-            return "returnResult";
+            return "borrowResult";  // 改成 return 结果页
         }
 
         boolean success = borrowService.borrowBook(user.getUserId(), bookId);
@@ -39,19 +39,18 @@ public class BorrowController {
             model.addAttribute("messageType", "error");
         }
 
-        return "redirect:/books/search";
+        return "borrowResult";  // 直接返回结果页，而不是 redirect
     }
 
     @PostMapping("/returnBook")
     public String returnBook(@RequestParam Integer recordId,
                              HttpSession session,
                              Model model) {
-
         User user = (User) session.getAttribute("user");
         if (user == null) {
             model.addAttribute("message", "请先登录系统");
             model.addAttribute("messageType", "error");
-            return "redirect:/login";
+            return "returnResult";  // 返回结果页
         }
 
         boolean success = borrowService.returnBook(recordId, user.getUserId());
@@ -63,7 +62,7 @@ public class BorrowController {
             model.addAttribute("messageType", "error");
         }
 
-        return "redirect:/borrow";
+        return "returnResult";  // 直接返回结果页
     }
 
     @GetMapping
