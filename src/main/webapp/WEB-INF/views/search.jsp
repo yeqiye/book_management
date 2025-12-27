@@ -265,8 +265,8 @@
 </div>
 
 <div class="parchment-card nav" style="height: 60px; display: flex; align-items: center; justify-content: center;">
-    <a href="${pageContext.request.contextPath}/main" class="active">首页</a>
-    <a href="${pageContext.request.contextPath}/books/search">图书检索</a>
+    <a href="${pageContext.request.contextPath}/main">首页</a>
+    <a href="${pageContext.request.contextPath}/books/search" class="active">图书检索</a>
     <a href="${pageContext.request.contextPath}/borrow">我的借阅</a>
     <c:if test="${sessionScope.user.admin}">
         <a href="${pageContext.request.contextPath}/users/manage">用户管理</a>
