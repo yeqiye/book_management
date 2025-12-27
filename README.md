@@ -12,3 +12,8 @@ git add .
 git commit -m ""
 git push origin main
 ```
+```
+#fork
+D:
+cd D:\JMU\book_management
+```
