@@ -63,6 +63,19 @@
             z-index: 1;
         }
 
+        .parchment::after {
+            content: "";
+            position: absolute;
+            bottom: 20px;      /* 距离底部 */
+            right: 30px;       /* 距离右侧 */
+            width: 80px;       /* 封蜡大小 */
+            height: 80px;
+            background: url('${pageContext.request.contextPath}/static/images/wax-seal.png') center/contain no-repeat;
+            opacity: 0.9;
+            pointer-events: none;  /* 不挡鼠标点击 */
+            z-index: 3;            /* 在内容之上 */
+        }
+
         h2 {
             text-align: center;
             margin-bottom: 20px;
@@ -163,7 +176,7 @@
             content: "⚡";
             position: absolute;
             top: 10px;
-            left:35%;
+            left:30%;
             transform: translateX(-50%);
             font-size: 18px;
             color: yellow;
