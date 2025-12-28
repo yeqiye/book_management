@@ -9,7 +9,7 @@
         body {
             font-family: "Georgia", "Times New Roman", serif;
             background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)),
-            url('https://images.unsplash.com/photo-1521587760476-6c12a4b04085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
             background-size: cover;
             color: #e0d4b8;
             min-height: 100vh;
@@ -165,6 +165,9 @@
             background: #f5e8c7;
             color: #8b6a3b;
             font-weight: bold;
+        }
+        tr{
+            color: #8b6f47;
         }
         tr:hover {
             background: rgba(194,164,109,0.15);
