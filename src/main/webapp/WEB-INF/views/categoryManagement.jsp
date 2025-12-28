@@ -153,7 +153,6 @@
             min-height: 80px;
         }
         button {
-            width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #8b6a3b, #6b4f2c);
             color: #f3e9d2;
@@ -169,23 +168,49 @@
             box-shadow: 0 5px 15px rgba(212,183,120,0.5);
         }
 
-        table {
+        /* 替换表格的CSS Grid布局 - 分类管理 */
+        .category-list-container {
             width: 100%;
-            border-collapse: collapse;
         }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #d4b778;
-        }
-        th {
+
+        .category-list-header {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 2fr 100px;
             background: #f5e8c7;
             color: #8b6a3b;
             font-weight: bold;
+            border-bottom: 2px solid #d4b778;
         }
-        tr:hover {
+
+        .category-list-header .header-cell {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .category-list-body {
+            max-height: 900px;
+            overflow-y: auto;
+        }
+
+        .category-row {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 2fr 100px;
+            border-bottom: 1px solid #d4b778;
+            transition: background 0.3s;
+            color: #8b6f47;
+        }
+
+        .category-row:hover {
             background: rgba(194,164,109,0.15);
         }
+
+        .category-row .cell {
+            padding: 15px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
         .action-btn {
             padding: 8px 16px;
             border: none;
@@ -195,14 +220,16 @@
             transition: all 0.3s;
             margin: 4px;
         }
+
         .edit-btn {
             background: linear-gradient(135deg, #8b6a3b, #6b4f2c);
             color: #f3e9d2;
         }
         .edit-btn:hover {
-            background: linear-gradient(135deg, #a67c3f, #8b6a3b);
+            background: linear-gradient(135deg, #a67c3b, #8b6a3b);
             transform: translateY(-2px);
         }
+
         .delete-btn {
             background: linear-gradient(135deg, #b45331, #8b2f1d);
             color: white;
@@ -215,6 +242,7 @@
             background: #cccccc;
             cursor: not-allowed;
         }
+
         .message {
             padding: 15px;
             border-radius: 8px;
@@ -231,10 +259,65 @@
             color: #e0d4b8;
             border: 2px solid #d4b778;
         }
+
         .panel-title {
             margin-bottom: 25px;
             color: #8b6a3b;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+
+        .edit-form {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 20px;
+            background: rgba(248,241,224,0.9);
+            border-left: 4px solid #8b6a3b;
+            border-bottom: 1px solid #d4b778;
+        }
+
+        .no-data {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #d4b778;
+            padding: 40px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .book-count {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(212,183,120,0.2);
+            border-radius: 5px;
+            color: #6b4f2c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1200px) {
+            .management-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .category-list-header,
+            .category-row {
+                grid-template-columns: 60px 1.5fr 1.5fr 120px 160px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .category-list-header,
+            .category-row {
+                grid-template-columns: 50px 1fr 120px 160px;
+            }
+
+            .category-list-header .header-cell:nth-child(3),
+            .category-row .cell:nth-child(3) {
+                display: none;
+            }
         }
     </style>
     <script>
@@ -247,6 +330,7 @@
             var editForm = document.getElementById('edit-form-' + categoryId);
             if (editForm) {
                 editForm.style.display = 'block';
+                editForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
@@ -306,64 +390,78 @@
                     <label for="description">分类描述：</label>
                     <textarea id="description" name="description" placeholder="请输入分类描述..."></textarea>
                 </div>
-                <button type="submit">添加分类</button>
+                <button type="submit" style="width: 100%;">添加分类</button>
             </form>
         </div>
 
         <div class="list-panel">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>分类名称</th>
-                    <th>描述</th>
-                    <th>图书数量</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach var="category" items="${categories}">
-                    <tr>
-                        <td>${category.categoryId}</td>
-                        <td><strong>${category.categoryName}</strong></td>
-                        <td>${empty category.description ? '无描述' : category.description}</td>
-                        <td>${category.bookCount} 本</td>
-                        <td>
-                            <button class="action-btn edit-btn" onclick="showEditForm(${category.categoryId})">编辑</button>
-                            <form method="post" action="${pageContext.request.contextPath}/categories/delete" style="display: inline;">
-                                <input type="hidden" name="categoryId" value="${category.categoryId}">
-                                <button type="submit" class="action-btn delete-btn" onclick="return confirm('确定要删除这个分类吗？')" ${category.bookCount > 0 ? 'disabled' : ''}>删除</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr id="edit-form-${category.categoryId}" class="edit-form" style="display: none;">
-                        <td colspan="5">
-                            <h4 style="color: #8b6a3b;">编辑分类信息</h4>
-                            <form method="post" action="${pageContext.request.contextPath}/categories/update">
-                                <input type="hidden" name="categoryId" value="${category.categoryId}">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                    <div class="form-group">
-                                        <label>分类名称：</label>
-                                        <input type="text" name="categoryName" value="${category.categoryName}" required>
+            <div class="category-list-container">
+                <div class="category-list-header">
+                    <div class="header-cell">ID</div>
+                    <div class="header-cell">分类名称</div>
+                    <div class="header-cell">描述</div>
+<%--                    <div class="header-cell">图书数量</div>--%>
+                    <div class="header-cell">操作</div>
+                </div>
+
+                <div class="category-list-body">
+                    <c:choose>
+                        <c:when test="${empty categories}">
+                            <div class="no-data">
+                                暂无分类数据
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="category" items="${categories}">
+                                <div class="category-row">
+                                    <div class="cell">${category.categoryId}</div>
+                                    <div class="cell"><strong>${category.categoryName}</strong></div>
+                                    <div class="cell">
+                                        <c:choose>
+                                            <c:when test="${empty category.description}">无描述</c:when>
+                                            <c:otherwise>${category.description}</c:otherwise>
+                                        </c:choose>
                                     </div>
-                                    <div class="form-group">
-                                        <label>分类描述：</label>
-                                        <textarea name="description">${category.description}</textarea>
+<%--                                    <div class="cell">${category.bookCount} 本</div>--%>
+                                    <div class="cell">
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit-btn" onclick="showEditForm(${category.categoryId})">编辑</button>
+                                            <form method="post" action="${pageContext.request.contextPath}/categories/delete" style="display: inline;">
+                                                <input type="hidden" name="categoryId" value="${category.categoryId}">
+                                                <button type="submit" class="action-btn delete-btn" onclick="return confirm('确定要删除这个分类吗？')" ${category.bookCount > 0 ? 'disabled' : ''}>删除</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="book-count">
-                                    该分类下有 ${category.bookCount} 本图书
+
+                                <div id="edit-form-${category.categoryId}" class="edit-form">
+                                    <h4 style="color: #8b6a3b; margin-bottom: 15px;">编辑分类信息 - ${category.categoryName}</h4>
+                                    <form method="post" action="${pageContext.request.contextPath}/categories/update">
+                                        <input type="hidden" name="categoryId" value="${category.categoryId}">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                            <div class="form-group">
+                                                <label>分类名称：</label>
+                                                <input type="text" name="categoryName" value="${category.categoryName}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>分类描述：</label>
+                                                <textarea name="description">${category.description}</textarea>
+                                            </div>
+                                        </div>
+<%--                                        <div class="book-count">--%>
+<%--                                            该分类下有 ${category.bookCount} 本图书--%>
+<%--                                        </div>--%>
+                                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                            <button type="submit" class="edit-btn" style="flex: 1;">更新信息</button>
+                                            <button type="button" class="delete-btn" onclick="cancelEdit(${category.categoryId})" style="flex: 1;">取消</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                                    <button type="submit" class="edit-btn">更新信息</button>
-                                    <button type="button" class="delete-btn" onclick="cancelEdit(${category.categoryId})">取消</button>
-                                </div>
-                            </form>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -111,6 +111,7 @@
             height: 3px;
             background: linear-gradient(to right, transparent, #d4b778, transparent);
         }
+
         .management-panel {
             display: grid;
             grid-template-columns: 400px 1fr;
@@ -149,7 +150,6 @@
             box-shadow: 0 0 10px rgba(212,183,120,0.5);
         }
         button {
-            width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #8b6a3b, #6b4f2c);
             color: #f3e9d2;
@@ -165,23 +165,49 @@
             box-shadow: 0 5px 15px rgba(212,183,120,0.5);
         }
 
-        table {
+        .book-list-container {
             width: 100%;
-            border-collapse: collapse;
         }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #d4b778;
-        }
-        th {
+
+        .book-list-header {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 100px 100px;
             background: #f5e8c7;
             color: #8b6a3b;
             font-weight: bold;
+            border-bottom: 2px solid #d4b778;
         }
-        tr:hover {
+
+        .book-list-header .header-cell {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .book-list-body {
+            max-height: 900px;
+            overflow-y: auto;
+        }
+
+        .book-row {
+            display: grid;
+            grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 100px 100px;
+            border-bottom: 1px solid #d4b778;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: #8b6f47;
+        }
+
+        .book-row:hover {
             background: rgba(194,164,109,0.15);
         }
+
+        .book-row .cell {
+            padding: 15px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
         .action-btn {
             padding: 8px 16px;
             border: none;
@@ -191,14 +217,16 @@
             transition: all 0.3s;
             margin: 4px;
         }
+
         .edit-btn {
             background: linear-gradient(135deg, #8b6a3b, #6b4f2c);
             color: #f3e9d2;
         }
         .edit-btn:hover {
-            background: linear-gradient(135deg, #a67c3f, #8b6a3b);
+            background: linear-gradient(135deg, #a67c3b, #8b6a3b);
             transform: translateY(-2px);
         }
+
         .delete-btn {
             background: linear-gradient(135deg, #b45331, #8b2f1d);
             color: white;
@@ -211,26 +239,89 @@
             background: #cccccc;
             cursor: not-allowed;
         }
+
         .message {
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 25px;
             text-align: center;
         }
+        .success {
+            background: rgba(212,183,120,0.3);
+            color: #3b2f1e;
+            border: 2px solid #d4b778;
+        }
+        .error {
+            background: rgba(244,67,54,0.3);
+            color: #e0d4b8;
+            border: 2px solid #d4b778;
+        }
+
         .panel-title {
             margin-bottom: 25px;
             color: #8b6a3b;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
         }
-        .expandable {
-            cursor: pointer;
-        }
+
         .book-details {
             display: none;
+            grid-column: 1 / -1;
             padding: 15px;
             background: rgba(248,241,224,0.5);
             border-left: 4px solid #d4b778;
-            margin-top: 10px;
+            border-bottom: 1px solid #d4b778;
+        }
+
+        .edit-form {
+            display: none;
+            grid-column: 1 / -1;
+            padding: 20px;
+            background: rgba(248,241,224,0.9);
+            border-left: 4px solid #8b6a3b;
+            border-bottom: 1px solid #d4b778;
+        }
+
+        .no-data {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #d4b778;
+            padding: 40px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1200px) {
+            .management-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .book-list-header,
+            .book-row {
+                grid-template-columns: 60px 1.5fr 1fr 1fr 120px 100px;
+            }
+
+            .book-list-header .header-cell:nth-child(5),
+            .book-row .cell:nth-child(5) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .book-list-header,
+            .book-row {
+                grid-template-columns: 50px 1fr 1fr 150px;
+            }
+
+            .book-list-header .header-cell:nth-child(3),
+            .book-list-header .header-cell:nth-child(4),
+            .book-row .cell:nth-child(3),
+            .book-row .cell:nth-child(4) {
+                display: none;
+            }
         }
     </style>
     <script>
@@ -257,7 +348,7 @@
         function toggleBookDetails(bookId) {
             var details = document.getElementById('details-' + bookId);
             if (details) {
-                details.style.display = details.style.display === 'none' || details.style.display === '' ? 'block' : 'none';
+                details.style.display = details.style.display === 'none' || details.style.display === '' ? 'grid' : 'none';
             }
         }
 
@@ -343,69 +434,73 @@
                     <label for="totalCopies">总数量：</label>
                     <input type="number" id="totalCopies" name="totalCopies" min="1" value="1" required>
                 </div>
-                <button type="submit">添加图书</button>
+                <div class="form-group">
+                    <label for="totalCopies">可借数量：</label>
+                    <input type="number" id="availableCopies" name="availableCopies" min="1" value="1" required>
+                </div>
+                <button type="submit" style="width: 100%;">添加图书</button>
             </form>
         </div>
 
         <div class="list-panel">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>书名</th>
-                    <th>作者</th>
-                    <th>分类</th>
-                    <th>出版社</th>
-                    <th>库存</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:choose>
-                    <c:when test="${empty books}">
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: #d4b778; padding: 40px;">
-                                暂无图书数据
-                            </td>
-                        </tr>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="book" items="${books}">
-                            <tr class="expandable" onclick="toggleBookDetails(${book.bookId})">
-                                <td>${book.bookId}</td>
-                                <td><strong>${book.title}</strong></td>
-                                <td>${book.author}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${empty book.categoryName}">未分类</c:when>
-                                        <c:otherwise>${book.categoryName}</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${empty book.publisher}">N/A</c:when>
-                                        <c:otherwise>${book.publisher}</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${not empty book.availableCopies and not empty book.totalCopies}">
-                                            ${book.availableCopies} / ${book.totalCopies}
-                                        </c:when>
-                                        <c:otherwise>N/A</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    <button class="action-btn edit-btn" onclick="event.stopPropagation(); showEditForm(${book.bookId})">编辑</button>
-                                    <form method="post" action="${pageContext.request.contextPath}/books/delete" style="display: inline;" onsubmit="return confirmDelete(${book.bookId}, '${book.title}')">
-                                        <input type="hidden" name="bookId" value="${book.bookId}">
-                                        <button type="submit" class="action-btn delete-btn" onclick="event.stopPropagation();">删除</button>
-                                    </form>
-                                </td>
-                            </tr>
+            <div class="book-list-container">
+                <div class="book-list-header">
+                    <div class="header-cell">ID</div>
+                    <div class="header-cell">书名</div>
+                    <div class="header-cell">作者</div>
+                    <div class="header-cell">分类</div>
+                    <div class="header-cell">出版社</div>
+                    <div class="header-cell">库存</div>
+                    <div class="header-cell">操作</div>
+                </div>
 
-                            <tr id="details-${book.bookId}" class="book-details" style="display: none;">
-                                <td colspan="7">
+                <div class="book-list-body">
+                    <c:choose>
+                        <c:when test="${empty books}">
+                            <div class="no-data">
+                                暂无图书数据
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="book" items="${books}">
+                                <div class="book-row" onclick="toggleBookDetails(${book.bookId})">
+                                    <div class="cell">${book.bookId}</div>
+                                    <div class="cell"><strong>${book.title}</strong></div>
+                                    <div class="cell">${book.author}</div>
+                                    <div class="cell">
+                                        <c:choose>
+                                            <c:when test="${empty book.categoryName}">未分类</c:when>
+                                            <c:otherwise>${book.categoryName}</c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="cell">
+                                        <c:choose>
+                                            <c:when test="${empty book.publisher}">N/A</c:when>
+                                            <c:otherwise>${book.publisher}</c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="cell">
+                                        <c:choose>
+<%--                                            <c:when test="${empty book.totalCopies}">N/A</c:when>--%>
+<%--                                            <c:otherwise>${book.availableCopies} / ${book.totalCopies}</c:otherwise>--%>
+                                            <c:when test="${not empty book.availableCopies and not empty book.totalCopies}">
+                                                ${book.availableCopies} / ${book.totalCopies}
+                                            </c:when>
+                                            <c:otherwise>N/A</c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="cell">
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit-btn" onclick="event.stopPropagation(); showEditForm(${book.bookId})">编辑</button>
+                                            <form method="post" action="${pageContext.request.contextPath}/books/delete" style="display: inline;" onsubmit="return confirmDelete(${book.bookId}, '${book.title}')">
+                                                <input type="hidden" name="bookId" value="${book.bookId}">
+                                                <button type="submit" class="action-btn delete-btn" onclick="event.stopPropagation();">删除</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="details-${book.bookId}" class="book-details" style="display: none;">
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; color: #4a3a24;">
                                         <div>
                                             <strong>ISBN：</strong> ${empty book.isbn ? 'N/A' : book.isbn}
@@ -432,12 +527,10 @@
                                             </c:choose>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
+                                </div>
 
-                            <tr id="edit-form-${book.bookId}" class="edit-form" style="display: none;">
-                                <td colspan="7">
-                                    <h4 style="color: #8b6a3b;">编辑图书信息 - ${book.title}</h4>
+                                <div id="edit-form-${book.bookId}" class="edit-form">
+                                    <h4 style="color: #8b6a3b; margin-bottom: 15px;">编辑图书信息 - ${book.title}</h4>
                                     <form method="post" action="${pageContext.request.contextPath}/books/update">
                                         <input type="hidden" name="bookId" value="${book.bookId}">
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -479,21 +572,24 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>总数量：</label>
-                                                <input type="number" name="totalCopies" value="${book.totalCopies}" min="1" required>
+                                                <input type="number" name="totalCopies" value="${book.totalCopies > 0 ? book.totalCopies : ''}" min="1" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>可借数量：</label>
+                                                <input type="number" name="availableCopies" value="${book.availableCopies > 0 ? book.availableCopies : ''}" min="1" required>
                                             </div>
                                         </div>
                                         <div style="display: flex; gap: 10px; margin-top: 20px;">
-                                            <button type="submit" class="edit-btn">更新信息</button>
-                                            <button type="button" class="delete-btn" onclick="cancelEdit(${book.bookId})">取消</button>
+                                            <button type="submit" class="edit-btn" style="flex: 1;">更新信息</button>
+                                            <button type="button" class="delete-btn" onclick="cancelEdit(${book.bookId})" style="flex: 1;">取消</button>
                                         </div>
                                     </form>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-                </tbody>
-            </table>
+                                </div>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
         </div>
     </div>
 </div>
